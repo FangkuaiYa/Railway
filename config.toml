@@ -1,0 +1,46 @@
+# Impostor Among Us Private Server — Configuration
+#
+# UDP server (game traffic):
+#   listen_ip / listen_port — where the UDP matchmaker binds.
+#   public_ip / public_port — the address clients will connect to (NAT public address).
+#
+# HTTP server (matchmaking / game listing — TCP):
+#   http.listen_ip / http.listen_port — where the HTTP API binds.
+#
+# IMPORTANT: these top-level keys must NOT be wrapped in a `[server]` table.
+# `ServerConfig` in config.rs deserializes `listen_ip`/`public_ip`/etc as
+# top-level fields (no nested "server" struct exists). A `[server]` header
+# here silently produces an unrecognized top-level key that is ignored, so
+# every one of these settings falls back to its `#[serde(default = ...)]`
+# value — most importantly `public_ip` defaults to "127.0.0.1". That means
+# real clients get told to connect to loopback instead of your actual public
+# IP, which is a very plausible reason a client can fetch UDP connection
+# info from the HTTP API but the actual UDP session then fails/times out.
+
+listen_ip = "0.0.0.0"
+listen_port = 22023
+public_ip = "127.0.0.1"
+public_port = 22023
+
+[anticheat]
+enabled = true
+ban_ip_from_game = true
+allow_cheating_hosts = "Never"
+allow_host_only_extensions = "IfRequested"
+enable_game_flow_checks = true
+enable_must_be_host_checks = true
+enable_color_limit_checks = true
+enable_name_limit_checks = true
+enable_ownership_checks = true
+enable_packet_size_checks = true
+packet_size_limit = 1203
+
+[compatibility]
+allow_future_game_versions = false
+allow_host_authority = false
+allow_version_mixing = false
+
+[http]
+enabled = true
+listen_ip = "0.0.0.0"
+listen_port = 22023
